@@ -14,7 +14,10 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	hub := newHub()
 	go hub.run()
-	http.HandleFunc("/", serveHome)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./html/index.html")
+	})
+	http.HandleFunc("/test", serveHome)
 	http.HandleFunc("/control", serveControl)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
@@ -28,7 +31,6 @@ func main() {
 }
 
 func serveHome(w http.ResponseWriter, r *http.Request) {
-	log.Printf("serveHome called: %s", r.URL)
 	if r.URL.Path != "/" {
 		http.Error(w, "Not found", 404)
 		log.Printf("No Found: %s", r.URL)
@@ -40,12 +42,10 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("Serving home: %s", r.URL)
 	http.ServeFile(w, r, "./html/home.html")
 }
 
 func serveControl(w http.ResponseWriter, r *http.Request) {
-	log.Println("serveControl called")
 	http.ServeFile(w, r, "./html/control.html")
 	return
 }

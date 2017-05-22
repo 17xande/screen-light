@@ -1,3 +1,22 @@
 html {
   margin: 0;
 }
+
+.block {
+  width: 6em;
+  height: 6em;
+  margin: .5em;
+  border-color: black;
+  border-width: 0.2em;
+  border-style: solid;
+  text-align: center;
+}
+
+#add span {
+  font-size: 5em;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}

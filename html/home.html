@@ -52,27 +52,27 @@
   <script>
     // window.onload = function() {
     let conn;
-    const msg = document.getElementById('msg');
-    const log = document.getElementById('log');
-    const form = document.getElementById('form');
+    const mess = document.getElementById('msg');
+    const logger = document.getElementById('log');
+    const frm = document.getElementById('form');
 
     function appendLog(item) {
-      let doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;
-      log.appendChild(item);
+      let doScroll = logger.scrollTop > logger.scrollHeight - logger.clientHeight - 1;
+      logger.appendChild(item);
       if (doScroll) {
-        log.scrollTop = log.scrollHeight - log.clientHeight;
+        logger.scrollTop = logger.scrollHeight - logger.clientHeight;
       }
     }
 
-    form.onsubmit = function () {
+    frm.onsubmit = function () {
       if (!conn) {
         return false;
       }
-      if (!msg.value) {
+      if (!mess.value) {
         return false;
       }
-      conn.send(msg.value);
-      msg.value = "";
+      conn.send(mess.value);
+      mess.value = "";
       return false;
     }
 
