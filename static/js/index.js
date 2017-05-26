@@ -1,5 +1,6 @@
 "use strict";
 
+
 if (!window["WebSocket"]) {
   document.body.innerHTML = "<h1>Sorry, your browser does not support this experiment.</h1>"
 } else {

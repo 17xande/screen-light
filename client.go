@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"log"
 	"net/http"
 	"time"
@@ -11,16 +10,16 @@ import (
 
 const (
 	// Time allowed to write a message
-	writeWait = 10 * time.Second
+	writeWait = 1 * time.Second
 
 	// Time allowed to read the next pong message from the web client
-	pongWait = 60 * time.Second
+	pongWait = 30 * time.Second
 
 	// Send pings to web client with this period. Must be less than pongWait
 	pingPeriod = pongWait * 9 / 10
 
 	// Max message size allowed from web client
-	maxMessageSize = 512
+	maxMessageSize = 128
 )
 
 var (
@@ -29,8 +28,8 @@ var (
 )
 
 var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
+	ReadBufferSize:  256,
+	WriteBufferSize: 256,
 }
 
 // Client is a middleman between the websocket connection and the hub.
@@ -90,8 +89,6 @@ func (c *Client) readPump() {
 			// break out of the loop if there is an error reading the message
 			break
 		}
-		// cleanup the message a bit
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		c.hub.broadcast <- message
 	}
 }
@@ -123,11 +120,11 @@ func (c *Client) writePump() {
 			w.Write(message)
 
 			// add queued chat messages to the current websocket message
-			n := len(c.send)
-			for i := 0; i < n; i++ {
-				w.Write(newline)
-				w.Write(<-c.send)
-			}
+			// n := len(c.send)
+			// for i := 0; i < n; i++ {
+			// 	w.Write(newline)
+			// 	w.Write(<-c.send)
+			// }
 
 			if err := w.Close(); err != nil {
 				return
@@ -143,3 +140,9 @@ func (c *Client) writePump() {
 		}
 	}
 }
+
+// TODO:
+// 1. change to send bytes instead of text
+// 2. change buffers to only handle the length of colour values, eg #111111
+// 3. See what causes multiple values to be sent along on one message/ data thing.
+// if that can't be avoided, discard early values and only process latest value.
