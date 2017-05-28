@@ -2,8 +2,14 @@
 
 const container = document.querySelector('.container');
 const tempColour = document.querySelector('#colour');
-const logger = document.querySelector('#log');
+const rngs = document.querySelectorAll('#setRanges input.ranges');
+const setColour = document.querySelector('#setColour');
 let conn;
+let setColourVal = {
+  r: 255,
+  g: 255,
+  b: 255
+};
 
 const colours = [
   "#f00",
@@ -11,7 +17,13 @@ const colours = [
   "#00f",
   "#000",
   "#fff"
-]
+];
+
+rngs.forEach(range => range.addEventListener('change', e => {
+  let base = e.target.dataset.base;
+  setColourVal[e.target.dataset.base] = e.target.value;
+  setColour.style.backgroundColor = `rgb(${setColourVal.r}, ${setColourVal.g}, ${setColourVal.b})`;
+}));
 
 colours.forEach(colour => addColour(colour));
 

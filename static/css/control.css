@@ -1,19 +1,43 @@
 html {
   margin: 0;
+  padding: 0;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+#add span {
+  font-size: 4.5em;
+}
+
+#settings {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  width: 100vw;
+  justify-content: center;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.column > label {
+  margin: .4em;
+}
+
+.ranges {
+  margin: .8em;
 }
 
 .block {
   width: 6em;
   height: 6em;
-  margin: .5em;
+  margin: .3em;
   border-color: black;
   border-width: 0.2em;
   border-style: solid;
   text-align: center;
-}
-
-#add span {
-  font-size: 5em;
 }
 
 .container {

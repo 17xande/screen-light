@@ -1,18 +1,22 @@
 "use strict";
 
+const message = document.querySelector('#message')
 
 if (!window["WebSocket"]) {
-  document.body.innerHTML = "<h1>Sorry, your browser does not support this experiment.</h1>"
+  message.textContent = "Sorry, your browser does not support this experiment."
 } else {
-  let conn = new WebSocket("ws://" + document.location.host + "/ws");
+  let socket = new WebSocket("ws://" + document.location.host + "/ws");
 
-  conn.onclose = function(e) {
-    console.log("connection closed");
-    document.body.innerHTML = "<h1>Connection Closed.</h1>";
-  }
-
-  conn.onmessage = function(e) {
+  socket.addEventListener('open', e => {
+    message.textContent = "Connected!";
+  });
+  socket.addEventListener('error', e => {
+    message.textContent = "Oops, something went wrong";
+  });
+  socket.addEventListener('close', e => {
+    message.textContent = "Lost connection, trying to reconnect...";
+  });
+  socket.addEventListener('message', e => {
     document.body.style.backgroundColor = e.data;
-    console.log(e.data);
-  }
+  });
 }
