@@ -12,13 +12,17 @@ func main() {
 	flag.Parse()
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
-	hub := newHub()
-	go hub.run()
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./html/index.html")
 	})
+
+	hub := newHub()
+	go hub.run()
+
 	http.HandleFunc("/test", serveHome)
-	http.HandleFunc("/control", serveControl)
+	http.HandleFunc("/control", func(w http.ResponseWriter, r *http.Request) {
+		serveController(hub, w, r)
+	})
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
 	})

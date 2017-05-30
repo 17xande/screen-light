@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Control</title>
+  <link rel="stylesheet" href="/static/css/range.css">
   <link rel="stylesheet" href="/static/css/control.css">
 </head>
 <body>
@@ -14,21 +15,20 @@
     </div>
   </div>
   <div id="settings">
-    <div class="column">
-      <label for="rngRed">Red</label>
-      <label for="rngGreen">Green</label>
-      <label for="rngBlue">Blue</label>
-    </div>
     <div id="setRanges" class="column">
-      <input type="range" id="rngRed" class="ranges" min="0" max="255" data-base="r">
-      <input type="range" id="rngGreen" class="ranges" min="0" max="255" data-base="g">
-      <input type="range" id="rngBlue" class="ranges" min="0" max="255" data-base="b">
+      <input type="range" id="rngRed" class="ranges red" min="0" max="255" data-base="r">
+      <input type="range" id="rngGreen" class="ranges green" min="0" max="255" data-base="g">
+      <input type="range" id="rngBlue" class="ranges blue" min="0" max="255" data-base="b">
+    </div>
+    <div id="setTexts" class="column">
+      <input type="number" pattern="\d*" id=txtRed data-base="r", min="0" max="255">
+      <input type="number" pattern="\d*" id="txtGreen" data-base="g" min="0" max="255">
+      <input type="number" pattern="\d*" id="txtblue" data-base="b" min="0" max="255">
     </div>
     <div class="column">
       <div id="setColour" class="block colour"></div>
     </div>
   </div>
-  <div id="log"></div>
   <template id="colour">
     <div class="block colour"></div>
   </template>

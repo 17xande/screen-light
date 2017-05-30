@@ -1,20 +1,20 @@
 "use strict";
 
-const message = document.querySelector('#message')
+const mess = document.querySelector('#message')
 
 if (!window["WebSocket"]) {
-  message.textContent = "Sorry, your browser does not support this experiment."
+  mess.textContent = "Sorry, your browser does not support this experiment."
 } else {
   let socket = new WebSocket("ws://" + document.location.host + "/ws");
 
   socket.addEventListener('open', e => {
-    message.textContent = "Connected!";
+    mess.textContent = "Connected!";
   });
   socket.addEventListener('error', e => {
-    message.textContent = "Oops, something went wrong";
+    mess.textContent = "Oops, something went wrong";
   });
   socket.addEventListener('close', e => {
-    message.textContent = "Lost connection, trying to reconnect...";
+    mess.textContent = "Lost connection, trying to reconnect...";
   });
   socket.addEventListener('message', e => {
     document.body.style.backgroundColor = e.data;

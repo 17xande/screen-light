@@ -63,12 +63,10 @@ func (c *Client) readPump() {
 		c.conn.Close()
 	}()
 
+	// All these limit things should probably be in the serveWS method. Will move them there later.
 	// set connection limits
 	c.conn.SetReadLimit(maxMessageSize)
 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
-	// not sure why we have to set the read deadline everytime we receive a pong?
-	// Perhaps because there is no timeout, just a deadline that needs to keep being
-	// updated everytime a new pong is received to keep the connection alive?
 	c.conn.SetPongHandler(func(string) error {
 		c.conn.SetReadDeadline(time.Now().Add(pongWait))
 		return nil
@@ -135,9 +133,3 @@ func (c *Client) writePump() {
 		}
 	}
 }
-
-// TODO:
-// 1. change to send bytes instead of text
-// 2. change buffers to only handle the length of colour values, eg #111111
-// 3. See what causes multiple values to be sent along on one message/ data thing.
-// if that can't be avoided, discard early values and only process latest value.

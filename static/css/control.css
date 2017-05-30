@@ -1,7 +1,19 @@
 html {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+body {
+  height: 100vh;
   margin: 0;
   padding: 0;
-  font-family: Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+#add {
+  cursor: crosshair;
+  background-color: white;
 }
 
 #add span {
@@ -9,38 +21,51 @@ html {
 }
 
 #settings {
-  position: absolute;
-  bottom: 0;
+  background-color: #ffffff;
+  border-top: solid;
   display: flex;
   align-items: center;
   width: 100vw;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .column {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 
 .column > label {
   margin: .4em;
 }
 
-.ranges {
-  margin: .8em;
+#setTexts input {
+  margin: 1em 0;
+  width: 3em;
 }
 
 .block {
   width: 6em;
   height: 6em;
-  margin: .3em;
+  margin: .1em;
   border-color: black;
-  border-width: 0.2em;
+  border-width: 0.4em;
   border-style: solid;
   text-align: center;
+  cursor: pointer;
+}
+
+.active {
+  border-color: orange;
 }
 
 .container {
   display: flex;
   flex-wrap: wrap;
+  flex-grow: 1;
+  justify-content: center;
+  align-content: flex-start;
+  background-color: #ffffff;
+  overflow: auto;
 }

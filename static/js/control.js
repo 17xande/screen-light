@@ -2,15 +2,10 @@
 
 const container = document.querySelector('.container');
 const tempColour = document.querySelector('#colour');
-const rngs = document.querySelectorAll('#setRanges input.ranges');
-const setColour = document.querySelector('#setColour');
-let conn;
-let setColourVal = {
-  r: 255,
-  g: 255,
-  b: 255
-};
-
+const rngs = document.querySelectorAll('#setRanges input');
+const txtColours = document.querySelectorAll('#setTexts input');
+const settingsColour = document.querySelector('#setColour');
+const adder = document.querySelector('#add');
 const colours = [
   "#f00",
   "#0f0",
@@ -19,11 +14,21 @@ const colours = [
   "#fff"
 ];
 
-rngs.forEach(range => range.addEventListener('change', e => {
-  let base = e.target.dataset.base;
-  setColourVal[e.target.dataset.base] = e.target.value;
-  setColour.style.backgroundColor = `rgb(${setColourVal.r}, ${setColourVal.g}, ${setColourVal.b})`;
-}));
+let conn;
+let active;
+let setColourVal = {
+  r: 255,
+  g: 255,
+  b: 255
+};
+
+// document.addEventListener('ontouchmove', e => e.preventDefault());
+
+rngs.forEach(range => range.addEventListener('change', setChange));
+rngs.forEach(range => range.addEventListener('mousemove', setChange));
+rngs.forEach(range => range.addEventListener('touchmove', setChange));
+txtColours.forEach(txtC => txtC.addEventListener('change', setChange));
+adder.addEventListener('click', e => addColour('#fff'));
 
 colours.forEach(colour => addColour(colour));
 
@@ -38,15 +43,25 @@ if (!window["WebSocket"]) {
   }
 
   conn.onmessage = function(e) {
-    console.log(`message received from host: ${e.data}`);
+    // console.log(`message received from host: ${e.data}`);
   }
 }
 
-// function appendLog(message) {
-//   let p = document.createElement('p');
-//   p.innerHTML = message;
-//   logger.appendChild(p);
-// }
+function setChange(e) {
+  let base = e.target.dataset.base;
+  setColourVal[e.target.dataset.base] = e.target.value;
+  changeColour();
+}
+
+function changeColour() {
+  let colour = `rgb(${setColourVal.r}, ${setColourVal.g}, ${setColourVal.b})`;
+  rngs[0].value = txtColours[0].value = setColourVal.r;
+  rngs[1].value = txtColours[1].value = setColourVal.g;
+  rngs[2].value = txtColours[2].value = setColourVal.b;
+
+  settingsColour.style.backgroundColor = colour;
+  if (active != null) active.style.backgroundColor = colour;
+}
 
 function addColour(colour) {
   let clone = document.importNode(tempColour.content, true);
@@ -62,6 +77,17 @@ function sendColour(e) {
     return false;
   }
 
-  console.log(`sending colour: ${this.dataset.colour}`);
   conn.send(this.dataset.colour);
+
+  let col = this.style.backgroundColor;
+  let [r, g, b] = col.substring(4, col.length-1).split(', ');
+  if (active != null) active.classList.remove('active');
+  this.classList.add('active');
+  active = this;
+
+  setColourVal.r = r;
+  setColourVal.g = g;
+  setColourVal.b = b;
+
+  changeColour();
 }
