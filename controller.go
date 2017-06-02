@@ -32,13 +32,8 @@ func serveController(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		instruct: make(chan []byte, 256),
 	}
 	co.hub.regController <- co
-	// set connection limits
-	co.conn.SetReadLimit(maxMessageSize)
-	co.conn.SetReadDeadline(time.Now().Add(pongWait))
-	co.conn.SetPongHandler(func(string) error {
-		co.conn.SetReadDeadline(time.Now().Add(pongWait))
-		return nil
-	})
+	go co.socketWrite()
+	co.socketRead()
 }
 
 func (co *Controller) socketRead() {
@@ -46,6 +41,14 @@ func (co *Controller) socketRead() {
 		co.hub.unregController <- co
 		co.conn.Close()
 	}()
+
+	// set connection limits
+	co.conn.SetReadLimit(maxMessageSize)
+	co.conn.SetReadDeadline(time.Now().Add(pongWait))
+	co.conn.SetPongHandler(func(string) error {
+		co.conn.SetReadDeadline(time.Now().Add(pongWait))
+		return nil
+	})
 
 	for {
 		_, instruction, err := co.conn.ReadMessage()
@@ -56,5 +59,24 @@ func (co *Controller) socketRead() {
 			break
 		}
 		co.hub.broadcast <- instruction
+	}
+}
+
+func (co *Controller) socketWrite() {
+	ticker := time.NewTicker(pingPeriod)
+	defer func() {
+		ticker.Stop()
+		co.conn.Close()
+	}()
+
+	for {
+		select {
+		case <-ticker.C:
+			co.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			err := co.conn.WriteMessage(websocket.PingMessage, []byte{})
+			if err != nil {
+				return
+			}
+		}
 	}
 }

@@ -35,7 +35,7 @@ colours.forEach(colour => addColour(colour));
 if (!window["WebSocket"]) {
   container.innerHTML = "<h1>Sorry, your browser does not support this experiment.</h1>"
 } else {
-  conn = new WebSocket("ws://" + document.location.host + "/ws");
+  conn = new WebSocket("ws://" + document.location.host + "/ws/control");
 
   conn.onclose = function(e) {
     console.log("connection closed");
@@ -77,17 +77,16 @@ function sendColour(e) {
     return false;
   }
 
-  conn.send(this.dataset.colour);
-
   let col = this.style.backgroundColor;
+  conn.send(col);
   let [r, g, b] = col.substring(4, col.length-1).split(', ');
-  if (active != null) active.classList.remove('active');
-  this.classList.add('active');
-  active = this;
-
   setColourVal.r = r;
   setColourVal.g = g;
   setColourVal.b = b;
+
+  if (active != null) active.classList.remove('active');
+  this.classList.add('active');
+  active = this;
 
   changeColour();
 }

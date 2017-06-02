@@ -20,7 +20,8 @@ func main() {
 	go hub.run()
 
 	http.HandleFunc("/test", serveHome)
-	http.HandleFunc("/control", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/control", serveControl)
+	http.HandleFunc("/ws/control", func(w http.ResponseWriter, r *http.Request) {
 		serveController(hub, w, r)
 	})
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
