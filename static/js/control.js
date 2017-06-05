@@ -6,16 +6,17 @@ const rngs = document.querySelectorAll('#setRanges input');
 const txtColours = document.querySelectorAll('#setTexts input');
 const settingsColour = document.querySelector('#setColour');
 const adder = document.querySelector('#add');
-const colours = [
-  "#f00",
-  "#0f0",
-  "#00f",
-  "#000",
-  "#fff"
-];
+// const colours = [
+//   "#f00",
+//   "#0f0",
+//   "#00f",
+//   "#000",
+//   "#fff"
+// ];
 
 let conn;
 let active;
+let colours;
 let setColourVal = {
   r: 255,
   g: 255,
@@ -30,7 +31,12 @@ rngs.forEach(range => range.addEventListener('touchmove', setChange));
 txtColours.forEach(txtC => txtC.addEventListener('change', setChange));
 adder.addEventListener('click', e => addColour('#fff'));
 
-colours.forEach(colour => addColour(colour));
+fetch("/static/js/colours.json")
+  .then(res => res.json())
+  .then(jsCol => {
+    colours = jsCol.colours;
+    colours.forEach(colour => addColour(colour));
+});
 
 if (!window["WebSocket"]) {
   container.innerHTML = "<h1>Sorry, your browser does not support this experiment.</h1>"
