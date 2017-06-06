@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -32,15 +33,6 @@ func serveController(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		instruct: make(chan []byte, 256),
 	}
 	co.hub.regController <- co
-	go co.socketWrite()
-	co.socketRead()
-}
-
-func (co *Controller) socketRead() {
-	defer func() {
-		co.hub.unregController <- co
-		co.conn.Close()
-	}()
 
 	// set connection limits
 	co.conn.SetReadLimit(maxMessageSize)
@@ -49,6 +41,24 @@ func (co *Controller) socketRead() {
 		co.conn.SetReadDeadline(time.Now().Add(pongWait))
 		return nil
 	})
+
+	go co.socketWrite()
+	co.socketRead()
+}
+
+func apiControl(hub *Hub, w http.ResponseWriter, r *http.Request) {
+	qs := r.URL.Query()
+	c := fmt.Sprintf("rgb(%s,%s,%s)", qs["r"][0], qs["g"][0], qs["b"][0])
+	// w.Write([]byte(c))
+	hub.broadcast <- []byte(c)
+	return
+}
+
+func (co *Controller) socketRead() {
+	defer func() {
+		co.hub.unregController <- co
+		co.conn.Close()
+	}()
 
 	for {
 		_, instruction, err := co.conn.ReadMessage()

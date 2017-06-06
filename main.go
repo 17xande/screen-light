@@ -21,6 +21,9 @@ func main() {
 
 	http.HandleFunc("/test", serveHome)
 	http.HandleFunc("/control", serveControl)
+	http.HandleFunc("/api/control", func(w http.ResponseWriter, r *http.Request) {
+		apiControl(hub, w, r)
+	})
 	http.HandleFunc("/ws/control", func(w http.ResponseWriter, r *http.Request) {
 		serveController(hub, w, r)
 	})
