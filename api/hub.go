@@ -1,4 +1,4 @@
-package main
+package api
 
 // Hub maintains the map of active clients and broadcasts messages to the clients.
 type Hub struct {
@@ -11,7 +11,8 @@ type Hub struct {
 	broadcast       chan []byte // inbound messages from clients
 }
 
-func newHub() *Hub {
+// NewHub returns a new *Hub
+func NewHub() *Hub {
 	return &Hub{
 		clients:         make(map[*Client]bool),
 		register:        make(chan *Client),
@@ -23,7 +24,8 @@ func newHub() *Hub {
 	}
 }
 
-func (h *Hub) run() {
+// Run starts the listening loop of the Hub
+func (h *Hub) Run() {
 	for {
 		// select prevents blocking by creating a way to drop messages
 		// from channels that are full. It looks like a switch statement

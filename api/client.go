@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"log"
@@ -36,7 +36,8 @@ type Client struct {
 	send chan []byte
 }
 
-func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+// ServeWs serves the WebSocket connection
+func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)

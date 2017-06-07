@@ -4,6 +4,8 @@ import (
 	"flag"
 	"log"
 	"net/http"
+
+	"github.com/17xande/screen-light/api"
 )
 
 var addr = flag.String("addr", ":8080", "http service address")
@@ -16,19 +18,20 @@ func main() {
 		http.ServeFile(w, r, "./html/index.html")
 	})
 
-	hub := newHub()
-	go hub.run()
+	hub := api.NewHub()
+	go hub.Run()
 
 	http.HandleFunc("/test", serveHome)
 	http.HandleFunc("/control", serveControl)
 	http.HandleFunc("/api/control", func(w http.ResponseWriter, r *http.Request) {
-		apiControl(hub, w, r)
+		api.ControlSend(hub, w, r)
 	})
+	http.HandleFunc("/api/colours/save", api.ColoursSave)
 	http.HandleFunc("/ws/control", func(w http.ResponseWriter, r *http.Request) {
-		serveController(hub, w, r)
+		api.ServeController(hub, w, r)
 	})
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(hub, w, r)
+		api.ServeWs(hub, w, r)
 	})
 
 	log.Printf("Listening on port %s", *addr)

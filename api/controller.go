@@ -1,7 +1,6 @@
-package main
+package api
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -20,8 +19,8 @@ type Controller struct {
 	messages chan []byte
 }
 
-// serve the controller interface
-func serveController(hub *Hub, w http.ResponseWriter, r *http.Request) {
+// ServeController serves the controller interface
+func ServeController(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -44,14 +43,6 @@ func serveController(hub *Hub, w http.ResponseWriter, r *http.Request) {
 
 	go co.socketWrite()
 	co.socketRead()
-}
-
-func apiControl(hub *Hub, w http.ResponseWriter, r *http.Request) {
-	qs := r.URL.Query()
-	c := fmt.Sprintf("rgb(%s,%s,%s)", qs["r"][0], qs["g"][0], qs["b"][0])
-	// w.Write([]byte(c))
-	hub.broadcast <- []byte(c)
-	return
 }
 
 func (co *Controller) socketRead() {
