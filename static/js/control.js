@@ -8,8 +8,9 @@ const rngs = document.querySelectorAll('#setRanges input');
 const txtColours = document.querySelectorAll('#setTexts input');
 const settingsColour = document.querySelector('#setColour');
 const btnSettings = document.querySelector('#btnSettings');
-const btnSave = document.querySelector('#btnSave');
+const btnDelete = document.querySelector('#btnDelete');
 const btnLoad = document.querySelector('#btnLoad');
+const btnSave = document.querySelector('#btnSave');
 
 let conn;
 let active;
@@ -26,16 +27,21 @@ rngs.forEach(range => range.addEventListener('change', setChange));
 rngs.forEach(range => range.addEventListener('mousemove', setChange));
 rngs.forEach(range => range.addEventListener('touchmove', setChange));
 txtColours.forEach(txtC => txtC.addEventListener('change', setChange));
-settingsColour.addEventListener('click', e => addColour(this.style.backgroundColor));
+settingsColour.addEventListener('click', e => addColour(settingsColour.style.backgroundColor));
 btnSettings.addEventListener('click', toggleSettings);
-btnSave.addEventListener('click', toggleSettings);
+btnDelete.addEventListener('click', removeElement);
+btnLoad.addEventListener('click', loadColours);
+btnSave.addEventListener('click', saveColours);
 
-fetch("/static/js/colours.json")
-  .then(res => res.json())
-  .then(jsCol => {
-    colours = jsCol.colours;
-    colours.forEach(colour => addColour(colour));
-});
+function loadColours(e) {
+  fetch("/static/js/colours.json")
+    .then(res => res.json())
+    .then(jsCol => {
+      container.innerHTML = '';
+      colours = jsCol.colours;
+      colours.forEach(colour => addColour(colour));
+  });
+}
 
 if (!window["WebSocket"]) {
   container.innerHTML = "<h1>Sorry, your browser does not support this experiment.</h1>"
@@ -50,6 +56,8 @@ if (!window["WebSocket"]) {
   conn.onmessage = function(e) {
     // console.log(`message received from host: ${e.data}`);
   }
+
+  loadColours();
 }
 
 function setChange(e) {
@@ -71,10 +79,13 @@ function changeColour() {
 function addColour(colour) {
   let clone = document.importNode(tempColour.content, true);
   let div = clone.firstElementChild;
-  div.dataset.colour = colour;
   div.style.backgroundColor = colour;
   div.addEventListener("click", sendColour);
   container.appendChild(clone);
+}
+
+function removeElement(e) {
+  active.parentNode.removeChild(active);
 }
 
 function sendColour(e) {
@@ -97,11 +108,15 @@ function sendColour(e) {
 }
 
 function saveColours(e) {
-  let p = JSON.stringify({colours: colours});
+  let cols = Array.from(container.querySelectorAll('.colour'))
+    .map(c => c.style.backgroundColor);
+  let p = JSON.stringify({colours: cols});
   fetch("/api/colours/save", {
     method: "POST",
     body: p
   });
+
+  toggleSettings(e);
 }
 
 function toggleSettings(e) {
