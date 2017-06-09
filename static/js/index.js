@@ -24,6 +24,7 @@ function socketConnect(e) {
   });
   socket.addEventListener('close', e => {
     btnConn.innerHTML = "Reconnect...";
+    btnConn.display = "";
     divBG.style.filter = "grayscale(1)";
     socket = null;
   });

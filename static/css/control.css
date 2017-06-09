@@ -11,23 +11,19 @@ body {
   box-sizing: border-box;
 }
 
-#add {
-  cursor: crosshair;
-  background-color: white;
-}
-
-#add span {
-  font-size: 4.5em;
-}
-
-#settings {
+.footer {
   background-color: #ffffff;
   border-top: solid;
   display: flex;
   align-items: center;
   width: 100vw;
   justify-content: center;
-  flex-shrink: 0;
+  transition: all 0.5s;
+}
+
+.hide {
+  /* transform: translateY(100%); */
+  display: none;
 }
 
 .column {
@@ -54,6 +50,10 @@ body {
   border-style: solid;
   text-align: center;
   cursor: pointer;
+}
+
+.block span {
+  font-size: 4.5em;
 }
 
 .active {

@@ -10,11 +10,12 @@
 </head>
 <body>
   <div class="container">
-    <div id="add" class="block">
-      <span>+</span>
-    </div>
   </div>
-  <div id="settings">
+  <div id="status" class="footer">
+    <span id="sConn">Connections:</span>
+    <button id="btnSettings">Settings</button>
+  </div>
+  <div id="settings" class="footer hide">
     <div id="setRanges" class="column">
       <input type="range" id="rngRed" class="ranges red" min="0" max="255" data-base="r">
       <input type="range" id="rngGreen" class="ranges green" min="0" max="255" data-base="g">
@@ -26,11 +27,13 @@
       <input type="number" pattern="\d*" id="txtblue" data-base="b" min="0" max="255">
     </div>
     <div class="column">
-      <div id="setColour" class="block colour"></div>
+      <div id="setColour" class="block colour">
+        <span>+</span>
+      </div>
     </div>
-    <div id="setMetrics" class="column">
-      <span>Connections:</span>
-      <span id="metConn"></span>
+    <div class="column">
+      <button id="btnSave">Save</button>
+      <button id="btnLoad">Load</button>
     </div>
   </div>
   <template id="colour">

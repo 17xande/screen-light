@@ -2,17 +2,14 @@
 
 const container = document.querySelector('.container');
 const tempColour = document.querySelector('#colour');
+const divSettings = document.querySelector('#settings');
+const divStatus = document.querySelector('#status');
 const rngs = document.querySelectorAll('#setRanges input');
 const txtColours = document.querySelectorAll('#setTexts input');
 const settingsColour = document.querySelector('#setColour');
-const adder = document.querySelector('#add');
-// const colours = [
-//   "#f00",
-//   "#0f0",
-//   "#00f",
-//   "#000",
-//   "#fff"
-// ];
+const btnSettings = document.querySelector('#btnSettings');
+const btnSave = document.querySelector('#btnSave');
+const btnLoad = document.querySelector('#btnLoad');
 
 let conn;
 let active;
@@ -29,7 +26,9 @@ rngs.forEach(range => range.addEventListener('change', setChange));
 rngs.forEach(range => range.addEventListener('mousemove', setChange));
 rngs.forEach(range => range.addEventListener('touchmove', setChange));
 txtColours.forEach(txtC => txtC.addEventListener('change', setChange));
-adder.addEventListener('click', e => addColour('#fff'));
+settingsColour.addEventListener('click', e => addColour(this.style.backgroundColor));
+btnSettings.addEventListener('click', toggleSettings);
+btnSave.addEventListener('click', toggleSettings);
 
 fetch("/static/js/colours.json")
   .then(res => res.json())
@@ -95,4 +94,22 @@ function sendColour(e) {
   active = this;
 
   changeColour();
+}
+
+function saveColours(e) {
+  let p = JSON.stringify({colours: colours});
+  fetch("/api/colours/save", {
+    method: "POST",
+    body: p
+  });
+}
+
+function toggleSettings(e) {
+  if (divSettings.classList.contains('hide')) {
+    divSettings.classList.remove('hide');
+    divStatus.classList.add('hide');
+  } else {
+    divSettings.classList.add('hide');
+    divStatus.classList.remove('hide');
+  }
 }
