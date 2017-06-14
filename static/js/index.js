@@ -16,16 +16,19 @@ function socketConnect(e) {
   socket = new WebSocket(sLink);
 
   socket.addEventListener('open', e => {
-    btnConn.style.display = "none";
-    divBG.style.filter = "none";
+    btnConn.style.display = 'none';
+    divBG.style.backgroundImage = 'none';
+    divBG.style.filter = 'none';
+    divBG.style.backgroundColor = 'cyan';
   });
   socket.addEventListener('error', e => {
-    mess.textContent = "Oops, something went wrong";
+    console.error(e);
   });
   socket.addEventListener('close', e => {
     btnConn.innerHTML = "Reconnect...";
-    btnConn.display = "";
-    divBG.style.filter = "grayscale(1)";
+    btnConn.style.display = "";
+    divBG.style.filter = 'grayscale(1)';
+    divBG.style.backgroundImage = '';
     socket = null;
   });
   socket.addEventListener('message', e => {

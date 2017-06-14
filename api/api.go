@@ -15,10 +15,36 @@ type apiResponse struct {
 // ControlSend handles get requests with the rgb values
 // sent in the querystring
 func ControlSend(hub *Hub, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+
 	qs := r.URL.Query()
-	c := fmt.Sprintf("rgb(%s,%s,%s)", qs["r"][0], qs["g"][0], qs["b"][0])
+	green := "0"
+	red := "0"
+	blue := "0"
+
+	if qs["r"] != nil {
+		red = qs["r"][0]
+	}
+	if qs["g"] != nil {
+		green = qs["g"][0]
+	}
+	if qs["b"] != nil {
+		blue = qs["b"][0]
+	}
+	c := fmt.Sprintf("rgb(%s,%s,%s)", red, green, blue)
 	// w.Write([]byte(c))
 	hub.broadcast <- []byte(c)
+	fmt.Println("API req:", c)
+
+	w.WriteHeader(http.StatusOK)
+	res := apiResponse{
+		success: true,
+	}
+
+	err := json.NewEncoder(w).Encode(res)
+	if err != nil {
+		fmt.Println("error encoding JSON: ", err)
+	}
 	return
 }
 

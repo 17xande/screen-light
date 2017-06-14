@@ -17,7 +17,6 @@ button {
   background-image: url("/static/img/fightthenight.jpg");
   background-size: cover;
   background-position: center;
-  background-position: center;
   background-blend-mode: multiply;
   filter: grayscale(1);
   font-family: Helvetica, Arial, sans-serif;

@@ -8,20 +8,18 @@ import (
 	"github.com/17xande/screen-light/api"
 )
 
-var addr = flag.String("addr", ":8080", "http service address")
+var addr = flag.String("addr", ":80", "http service address")
 
 func main() {
 	flag.Parse()
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./html/index.html")
-	})
+	http.HandleFunc("/", serveHome)
 
 	hub := api.NewHub()
 	go hub.Run()
 
-	http.HandleFunc("/test", serveHome)
+	http.HandleFunc("/test", serveTest)
 	http.HandleFunc("/control", serveControl)
 	http.HandleFunc("/api/control", func(w http.ResponseWriter, r *http.Request) {
 		api.ControlSend(hub, w, r)
@@ -53,7 +51,19 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	http.ServeFile(w, r, "./html/index.html")
+	return
+}
+
+func serveTest(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", 405)
+		log.Printf("Method not allowed: %s", r.URL)
+		return
+	}
+
 	http.ServeFile(w, r, "./html/home.html")
+	return
 }
 
 func serveControl(w http.ResponseWriter, r *http.Request) {
