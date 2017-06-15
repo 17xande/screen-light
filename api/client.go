@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -49,6 +50,15 @@ func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		send: make(chan []byte, 256),
 	}
 	client.hub.register <- client
+
+	// set connection limits
+	client.conn.SetReadLimit(maxMessageSize)
+	client.conn.SetReadDeadline(time.Now().Add(pongWait))
+	client.conn.SetPongHandler(func(string) error {
+		client.conn.SetReadDeadline(time.Now().Add(pongWait))
+		return nil
+	})
+
 	go client.writePump()
 	client.readPump()
 }
@@ -63,15 +73,6 @@ func (c *Client) readPump() {
 		c.hub.unregister <- c
 		c.conn.Close()
 	}()
-
-	// All these limit things should probably be in the serveWS method. Will move them there later.
-	// set connection limits
-	c.conn.SetReadLimit(maxMessageSize)
-	c.conn.SetReadDeadline(time.Now().Add(pongWait))
-	c.conn.SetPongHandler(func(string) error {
-		c.conn.SetReadDeadline(time.Now().Add(pongWait))
-		return nil
-	})
 
 	// infinite loop listening for messages from the web client
 	for {
@@ -109,6 +110,7 @@ func (c *Client) writePump() {
 			// gets the next available writer
 			w, err := c.conn.NextWriter(websocket.TextMessage)
 			if err != nil {
+				fmt.Println(err)
 				return
 			}
 			w.Write(message)

@@ -11,6 +11,7 @@ const btnSettings = document.querySelector('#btnSettings');
 const btnDelete = document.querySelector('#btnDelete');
 const btnLoad = document.querySelector('#btnLoad');
 const btnSave = document.querySelector('#btnSave');
+const sConn = document.querySelector('#sConn');
 
 let conn;
 let active;
@@ -54,7 +55,11 @@ if (!window["WebSocket"]) {
   }
 
   conn.onmessage = function(e) {
-    // console.log(`message received from host: ${e.data}`);
+    setTotalConnections(e.data);
+  }
+
+  conn.onerror = function(e) {
+    console.error(error);
   }
 
   loadColours();
@@ -127,4 +132,8 @@ function toggleSettings(e) {
     divSettings.classList.add('hide');
     divStatus.classList.remove('hide');
   }
+}
+
+function setTotalConnections(iConns) {
+  sConn.innerText = `Connections: ${iConns}`;
 }

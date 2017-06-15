@@ -34,11 +34,13 @@ func (h *Hub) Run() {
 		// a new *Client. Store it in the hub.
 		case client := <-h.register:
 			h.clients[client] = true
+			notifyControllers(h)
 		case client := <-h.unregister:
 			// check if the client is in the list. If it's not, ignore this request.
 			if _, ok := h.clients[client]; ok {
 				delete(h.clients, client)
 				close(client.send)
+				notifyControllers(h)
 			}
 		case controller := <-h.regController:
 			h.controllers[controller] = true
@@ -61,6 +63,18 @@ func (h *Hub) Run() {
 					delete(h.clients, client)
 				}
 			}
+		}
+	}
+}
+
+func notifyControllers(h *Hub) {
+	for controller := range h.controllers {
+		select {
+		case controller.conns <- len(h.clients):
+
+		default:
+			close(controller.conns)
+			delete(h.controllers, controller)
 		}
 	}
 }

@@ -3,7 +3,10 @@ package api
 import (
 	"log"
 	"net/http"
+	"strconv"
 	"time"
+
+	"fmt"
 
 	"github.com/gorilla/websocket"
 )
@@ -15,8 +18,8 @@ type Controller struct {
 	conn *websocket.Conn
 	// channel of outbound instructions
 	instruct chan []byte
-	// channel of inbound status messages from hub
-	messages chan []byte
+	// channel of inbound connection messages from hub
+	conns chan int
 }
 
 // ServeController serves the controller interface
@@ -30,6 +33,7 @@ func ServeController(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		hub:      hub,
 		conn:     conn,
 		instruct: make(chan []byte, 256),
+		conns:    make(chan int, 0),
 	}
 	co.hub.regController <- co
 
@@ -72,10 +76,29 @@ func (co *Controller) socketWrite() {
 
 	for {
 		select {
+		case conns, ok := <-co.conns:
+			co.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			if !ok {
+				co.conn.WriteMessage(websocket.CloseMessage, []byte{})
+				return
+			}
+
+			w, err := co.conn.NextWriter(websocket.TextMessage)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			w.Write([]byte(strconv.Itoa(conns)))
+			if err := w.Close(); err != nil {
+				fmt.Println(err)
+				return
+			}
 		case <-ticker.C:
 			co.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			err := co.conn.WriteMessage(websocket.PingMessage, []byte{})
 			if err != nil {
+				fmt.Println(err)
 				return
 			}
 		}
