@@ -14,6 +14,7 @@ func main() {
 	flag.Parse()
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	http.Handle("/apple-touch-icon.png", http.FileServer(http.Dir("static/img")))
 	http.HandleFunc("/", serveHome)
 
 	hub := api.NewHub()
@@ -42,7 +43,7 @@ func main() {
 func serveHome(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.Error(w, "Not found", 404)
-		log.Printf("No Found: %s", r.URL)
+		log.Printf("Not Found: %s", r.URL)
 		return
 	}
 	if r.Method != "GET" {
