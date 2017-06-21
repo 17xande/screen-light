@@ -50,8 +50,8 @@ function processMessage(message) {
 
   if (message.preset) {
     let p = presets[message.preset - 1];
-    divBG.backgroundColor = ''
     divBG.style.backgroundImage = p;
+    divBG.style.backgroundColor = ''
     return;
   } 
   
