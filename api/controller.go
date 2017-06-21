@@ -49,6 +49,12 @@ func ServeController(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	co.socketRead()
 }
 
+// ControlPreset handles requests sent to engage a preset
+// Used in the REST API
+func ControlPreset(hub *Hub, w http.ResponseWriter, r *http.Request) {
+
+}
+
 func (co *Controller) socketRead() {
 	defer func() {
 		co.hub.unregController <- co

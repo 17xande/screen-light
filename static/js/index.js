@@ -4,11 +4,21 @@ const mess = document.querySelector('#message');
 const btnConn = document.querySelector('#btnConnect');
 const divBG = document.querySelector('#background');
 let socket;
+let presets;
+
+loadPresets();
 
 if (!window["WebSocket"]) {
   mess.textContent = "Sorry, your browser does not support this experiment."
 } else {
   btnConn.addEventListener('click', socketConnect);
+}
+
+function loadPresets() {
+  fetch("/static/js/presets.json")
+    .then(res => res.json())
+    .then(jsPre => presets = jsPre.presets)
+    .catch(err => console.error(err));
 }
 
 function socketConnect(e) {
@@ -31,7 +41,23 @@ function socketConnect(e) {
     socket = null;
   });
   socket.addEventListener('message', e => {
-    divBG.style.backgroundImage = 'none';
-    divBG.style.backgroundColor = e.data;
+    console.log(e.data);
+    processMessage(JSON.parse(e.data));
   });
+}
+
+function processMessage(message) {
+  divBG.style.backgroundImage = 'none';
+
+  if (message.preset) {
+    let p = presets[message.preset - 1];
+    divBG.style.backgroundImage = p;
+    return;
+  } 
+  
+  if (message.frequency) {
+
+  }
+
+  divBG.style.backgroundColor = message.color;
 }

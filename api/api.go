@@ -4,12 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 type apiResponse struct {
-	success bool
+	Success   bool   `json:"success"`
+	Preset    int    `json:"preset,omitempty"`
+	Color     string `json:"color"`
+	Frequency int    `json:"frequency,omitempty"`
 }
 
 // ControlSend handles get requests with the rgb values
@@ -22,6 +27,10 @@ func ControlSend(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	red := "0"
 	blue := "0"
 
+	ar := apiResponse{
+		Success: true,
+	}
+
 	if qs["r"] != nil {
 		red = qs["r"][0]
 	}
@@ -31,19 +40,38 @@ func ControlSend(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	if qs["b"] != nil {
 		blue = qs["b"][0]
 	}
-	c := fmt.Sprintf("rgb(%s,%s,%s)", red, green, blue)
-	// w.Write([]byte(c))
-	hub.broadcast <- []byte(c)
-	fmt.Println("API req:", c)
-
-	w.WriteHeader(http.StatusOK)
-	res := apiResponse{
-		success: true,
+	if qs["f"] != nil {
+		f, err := strconv.Atoi(qs["f"][0])
+		ar.Frequency = f
+		if err != nil {
+			ar.Success = false
+			log.Printf("error: %v", err)
+		}
+	}
+	if qs["p"] != nil {
+		p, err := strconv.Atoi(qs["p"][0])
+		ar.Preset = p
+		if err != nil {
+			ar.Success = false
+			log.Printf("error: %v", err)
+		}
 	}
 
-	err := json.NewEncoder(w).Encode(res)
+	ar.Color = fmt.Sprintf("rgb(%s,%s,%s)", red, green, blue)
+	jsAr, err := json.Marshal(ar)
 	if err != nil {
-		fmt.Println("error encoding JSON: ", err)
+		log.Printf("error: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	hub.broadcast <- jsAr
+
+	w.WriteHeader(http.StatusOK)
+
+	_, err = w.Write(jsAr)
+	if err != nil {
+		fmt.Println("error writing response: ", err)
 	}
 	return
 }
@@ -80,7 +108,7 @@ func ColoursSave(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res := apiResponse{
-		success: success,
+		Success: success,
 	}
 
 	err = json.NewEncoder(w).Encode(res)

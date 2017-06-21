@@ -41,7 +41,7 @@ function loadColours(e) {
       container.innerHTML = '';
       colours = jsCol.colours;
       colours.forEach(colour => addColour(colour));
-  });
+  }).catch(err => console.error(err));
 }
 
 if (!window["WebSocket"]) {
