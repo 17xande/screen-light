@@ -14,6 +14,7 @@ type apiResponse struct {
 	Success   bool   `json:"success"`
 	Preset    int    `json:"preset,omitempty"`
 	Color     string `json:"color"`
+	Animation string `json:"animation,omitempty"`
 	Frequency int    `json:"frequency,omitempty"`
 }
 
@@ -39,6 +40,9 @@ func ControlSend(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 	if qs["b"] != nil {
 		blue = qs["b"][0]
+	}
+	if qs["a"] != nil {
+		ar.Animation = qs["a"][0]
 	}
 	if qs["f"] != nil {
 		f, err := strconv.Atoi(qs["f"][0])

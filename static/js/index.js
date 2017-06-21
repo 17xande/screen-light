@@ -47,17 +47,18 @@ function socketConnect(e) {
 }
 
 function processMessage(message) {
-  divBG.style.backgroundImage = 'none';
 
   if (message.preset) {
     let p = presets[message.preset - 1];
+    divBG.backgroundColor = ''
     divBG.style.backgroundImage = p;
     return;
   } 
   
-  if (message.frequency) {
+  if (message.animation === "strobe") {
 
   }
 
+  divBG.style.backgroundImage = 'none';
   divBG.style.backgroundColor = message.color;
 }
