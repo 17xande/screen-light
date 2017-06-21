@@ -17,9 +17,8 @@ function socketConnect(e) {
 
   socket.addEventListener('open', e => {
     btnConn.style.display = 'none';
-    divBG.style.backgroundImage = 'none';
+    // divBG.style.backgroundImage = 'none';
     divBG.style.filter = 'none';
-    divBG.style.backgroundColor = 'cyan';
   });
   socket.addEventListener('error', e => {
     console.error(e);
@@ -32,6 +31,7 @@ function socketConnect(e) {
     socket = null;
   });
   socket.addEventListener('message', e => {
+    divBG.style.backgroundImage = 'none';
     divBG.style.backgroundColor = e.data;
   });
 }
