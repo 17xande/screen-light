@@ -18,10 +18,9 @@ if (!window["WebSocket"]) {
 function connect(e) {
   const docEl = window.document.documentElement;
   let requestFullScreen = docEl.webkitRequestFullScreen || docEl.mozRequestFullScreen || docEl.requestFullScreen;
-  requestFullScreen.call(docEl);
 
-  if (divBG.requestFullscreen) {
-    divBG.requestFullscreen();
+  if (requestFullScreen) {
+    requestFullScreen.call(docEl);
   }
   socketConnect(e)
 }
