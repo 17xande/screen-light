@@ -12,7 +12,18 @@ loadPresets();
 if (!window["WebSocket"]) {
   mess.textContent = "Sorry, your browser does not support this experiment."
 } else {
-  btnConn.addEventListener('click', socketConnect);
+  btnConn.addEventListener('click', connect);
+}
+
+function connect(e) {
+  const docEl = window.document.documentElement;
+  let requestFullScreen = docEl.webkitRequestFullScreen || docEl.mozRequestFullScreen || docEl.requestFullScreen;
+  requestFullScreen.call(docEl);
+
+  if (divBG.requestFullscreen) {
+    divBG.requestFullscreen();
+  }
+  socketConnect(e)
 }
 
 function loadPresets() {
@@ -65,13 +76,13 @@ function processMessage(message) {
     divBG.style.backgroundColor = message.color;
   }
   
+  divBG.classList.remove('strobe', 'pulse');
   if (message.animation) {
     divBG.classList.add(message.animation);
     if (message.frequency) {
       divBG.style.animationDuration = message.frequency + "ms";
     }
   } else {
-    divBG.classList.remove('strobe', 'pulse');
     divBG.style.animationDuration = '';
   }
 }
