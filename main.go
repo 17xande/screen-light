@@ -15,6 +15,7 @@ func main() {
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.Handle("/apple-touch-icon.png", http.FileServer(http.Dir("static/img")))
+	http.Handle("/favicon.ico", http.FileServer(http.Dir("static/img")))
 	http.HandleFunc("/", serveHome)
 
 	hub := api.NewHub()
