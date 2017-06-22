@@ -44,7 +44,7 @@ func ControlSend(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	if qs["a"] != nil {
 		ar.Animation = qs["a"][0]
 	}
-	if qs["f"] != nil {
+	if qs["f"] != nil && len(qs["f"][0]) > 0 {
 		f, err := strconv.Atoi(qs["f"][0])
 		ar.Frequency = f
 		if err != nil {
@@ -52,7 +52,7 @@ func ControlSend(hub *Hub, w http.ResponseWriter, r *http.Request) {
 			log.Printf("error: %v", err)
 		}
 	}
-	if qs["p"] != nil {
+	if qs["p"] != nil && len(qs["p"][0]) > 0 {
 		p, err := strconv.Atoi(qs["p"][0])
 		ar.Preset = p
 		if err != nil {

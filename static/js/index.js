@@ -52,13 +52,18 @@ function processMessage(message) {
     let p = presets[message.preset - 1];
     divBG.style.backgroundImage = p;
     divBG.style.backgroundColor = ''
-    return;
-  } 
+  } else {
+    divBG.style.backgroundImage = 'none';
+    divBG.style.backgroundColor = message.color;
+  }
   
   if (message.animation === "strobe") {
-
+    divBG.classList.add('strobe');
+    if (message.frequency) {
+      divBG.style.animationDuration = message.frequency + "ms";
+    }
+  } else {
+    divBG.classList.remove('strobe');
+    divBG.style.animationDuration = '';
   }
-
-  divBG.style.backgroundImage = 'none';
-  divBG.style.backgroundColor = message.color;
 }

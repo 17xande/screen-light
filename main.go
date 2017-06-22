@@ -13,9 +13,11 @@ var addr = flag.String("addr", ":80", "http service address")
 func main() {
 	flag.Parse()
 	fs := http.FileServer(http.Dir("static"))
+	imgs := http.FileServer(http.Dir("static/img"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
-	http.Handle("/apple-touch-icon.png", http.FileServer(http.Dir("static/img")))
-	http.Handle("/favicon.ico", http.FileServer(http.Dir("static/img")))
+	http.Handle("/apple-touch-icon.png", imgs)
+	http.Handle("/apple-touch-icon-120x120.png", imgs)
+	http.Handle("/favicon.ico", imgs)
 	http.HandleFunc("/", serveHome)
 
 	hub := api.NewHub()

@@ -24,3 +24,14 @@ button {
   align-items: center;
   justify-content: center;
 }
+
+.strobe {
+  animation-name: strobe;
+  animation-duration: 50ms;
+  animation-timing-function: steps(1, end);
+  animation-iteration-count: infinite;
+}
+
+@keyframes strobe {
+  50% { background: black }
+}
