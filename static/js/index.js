@@ -71,7 +71,7 @@ function processMessage(message) {
       divBG.style.animationDuration = message.frequency + "ms";
     }
   } else {
-    divBG.classList.remove('strobe');
+    divBG.classList.remove('strobe', 'pulse');
     divBG.style.animationDuration = '';
   }
 }
