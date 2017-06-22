@@ -9,6 +9,7 @@ type Hub struct {
 	regController   chan *Controller
 	unregController chan *Controller
 	broadcast       chan []byte // inbound messages from clients
+	lastInstruction []byte
 }
 
 // NewHub returns a new *Hub
@@ -35,6 +36,9 @@ func (h *Hub) Run() {
 		case client := <-h.register:
 			h.clients[client] = true
 			notifyControllers(h)
+			if h.lastInstruction != nil {
+				client.send <- h.lastInstruction
+			}
 		case client := <-h.unregister:
 			// check if the client is in the list. If it's not, ignore this request.
 			if _, ok := h.clients[client]; ok {
@@ -50,6 +54,8 @@ func (h *Hub) Run() {
 				close(controller.instruct)
 			}
 		case message := <-h.broadcast:
+			// store the last instruction to send to new connections
+			h.lastInstruction = message
 			// loop through all clients and send the message to them all
 			for client := range h.clients {
 				// send the message to the clients. Use a select in case the client
