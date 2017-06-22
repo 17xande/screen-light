@@ -1,11 +1,11 @@
 "use strict";
 
-const mess = document.querySelector('#message');
-const btnConn = document.querySelector('#btnConnect');
-const divBG = document.querySelector('#background');
-let retries = 0;
-let socket;
-let presets;
+var mess = document.querySelector('#message');
+var btnConn = document.querySelector('#btnConnect');
+var divBG = document.querySelector('#background');
+var retries = 0;
+var socket;
+var presets;
 
 loadPresets();
 
@@ -16,8 +16,8 @@ if (!window["WebSocket"]) {
 }
 
 function connect(e) {
-  const docEl = window.document.documentElement;
-  let requestFullScreen = docEl.webkitRequestFullScreen || docEl.mozRequestFullScreen || docEl.requestFullScreen;
+  var docEl = window.document.documentElement;
+  var requestFullScreen = docEl.webkitRequestFullScreen || docEl.mozRequestFullScreen || docEl.requestFullScreen;
 
   if (requestFullScreen) {
     requestFullScreen.call(docEl);
@@ -33,7 +33,7 @@ function loadPresets() {
 }
 
 function socketConnect(e) {
-  const sLink = "ws://" + document.location.host + "/ws"
+  var sLink = "ws://" + document.location.host + "/ws"
   socket = new WebSocket(sLink);
 
   socket.addEventListener('open', e => {
@@ -67,7 +67,7 @@ function socketConnect(e) {
 function processMessage(message) {
 
   if (message.preset) {
-    let p = presets[message.preset - 1];
+    var p = presets[message.preset - 1];
     divBG.style.backgroundImage = p;
     divBG.style.backgroundColor = ''
   } else {
