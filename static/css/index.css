@@ -32,6 +32,18 @@ button {
   animation-iteration-count: infinite;
 }
 
+.pulse {
+  animation-name: pulse;
+  animation-duration: 0.5s;
+  animation-direction: alternate;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+}
+
 @keyframes strobe {
   50% { background: black }
+}
+
+@keyframes pulse {
+  0% { background-color: black }
 }

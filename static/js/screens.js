@@ -1,18 +1,15 @@
 "use strict";
 
-const mess = document.querySelector('#message');
-const btnConn = document.querySelector('#btnConnect');
 const divBG = document.querySelector('#background');
-let retries = 0;
 let socket;
 let presets;
 
 loadPresets();
 
 if (!window["WebSocket"]) {
-  mess.textContent = "Sorry, your browser does not support this experiment."
+  console.warn("Websockets not supported.");
 } else {
-  btnConn.addEventListener('click', socketConnect);
+  socketConnect();
 }
 
 function loadPresets() {
@@ -27,25 +24,13 @@ function socketConnect(e) {
   socket = new WebSocket(sLink);
 
   socket.addEventListener('open', e => {
-    btnConn.style.display = 'none';
-    // divBG.style.backgroundImage = 'none';
-    divBG.style.filter = 'none';
+    divBG.backgroundColor = "black"
   });
   socket.addEventListener('error', e => {
     console.error(e);
   });
   socket.addEventListener('close', e => {
-    if (retries++ >= 10) {
-      btnConn.innerHTML = "Reconnect";
-      btnConn.style.display = "";
-      divBG.style.filter = 'grayscale(1)';
-      divBG.style.backgroundImage = '';
-      socket = null;
-      retries = 0;
-      return;
-    }
-
-    console.log("retrying connection. Try ", retries);
+    console.warn("retrying connection. Try ", retries);
     setTimeout(socketConnect, 2000);
   });
   socket.addEventListener('message', e => {

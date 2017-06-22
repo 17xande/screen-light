@@ -19,6 +19,7 @@ func main() {
 	http.Handle("/apple-touch-icon-120x120.png", imgs)
 	http.Handle("/favicon.ico", imgs)
 	http.HandleFunc("/", serveHome)
+	http.HandleFunc("/screens", serveScreens)
 
 	hub := api.NewHub()
 	go hub.Run()
@@ -56,7 +57,6 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.ServeFile(w, r, "./html/index.html")
-	return
 }
 
 func serveTest(w http.ResponseWriter, r *http.Request) {
@@ -67,10 +67,12 @@ func serveTest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.ServeFile(w, r, "./html/home.html")
-	return
 }
 
 func serveControl(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "./html/control.html")
-	return
+}
+
+func serveScreens(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./html/screens.html")
 }
