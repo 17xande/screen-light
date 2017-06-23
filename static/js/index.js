@@ -12,10 +12,10 @@ loadPresets();
 if (!window["WebSocket"]) {
   mess.textContent = "Sorry, your browser does not support this experiment."
 } else {
-  btnConn.addEventListener('click', connect);
+  btnConn.addEventListener('click', startConnect);
 }
 
-function connect(e) {
+function startConnect(e) {
   var docEl = window.document.documentElement;
   var requestFullScreen = docEl.webkitRequestFullScreen || docEl.mozRequestFullScreen || docEl.requestFullScreen;
 
@@ -26,10 +26,22 @@ function connect(e) {
 }
 
 function loadPresets() {
-  fetch("/static/js/presets.json")
-    .then(res => res.json())
-    .then(jsPre => presets = jsPre.presets)
-    .catch(err => console.error(err));
+  // fetch("/static/js/presets.json")
+  //   .then(res => res.json())
+  //   .then(jsPre => presets = jsPre.presets)
+  //   .catch(err => console.error(err));
+
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200){
+      presets = JSON.parse(xhr.responseText).presets;
+    } else {
+      console.warn(xhr.status);
+    }
+  }  
+
+  xhr.open('GET', '/static/js/presets.json', true);                  
+  xhr.send(null); 
 }
 
 function socketConnect(e) {
